@@ -66,10 +66,10 @@ Move (or copy) this file in the directory where you want to use Yambo and use it
 ./drun.sh yambo -F yambo.in -J yambo.out
 ```
 
-This script gives you the possibility to choose the container's name with the option `-c`, set the environment variable `OMP_NUM_THREADS` with the option `-t` and the number of MPI tasks with the option `-np`. Here an example:
+This script gives you the possibility to choose the container's name with the option `-c`, to set the environment variable `OMP_NUM_THREADS` with the option `-t` and the number of MPI tasks with the option `-np`. Here an example:
 
 ```
-./drun.sh -c nicspalla/yambo-gcc_openmpi_mkl_slepc -t 2 -np 4 yambo -F yambo_8.in -J yambo.out
+./drun.sh -c nicspalla/yambo-gcc_openmpi_mkl_slepc -t 2 -np 4 yambo -F yambo.in -J yambo.out
 ```
 
 If the yambo container is working correctly you should obtain:
