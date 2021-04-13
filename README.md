@@ -26,11 +26,32 @@ docker run -ti --user $(id -u):$(id -g) \
 Otherwise (suggested!), copy and paste the code below in a file, i.e called drun.sh:
 
 ```
-#!/bin/bash 
+#!/bin/bash
+
+threads=1
+mpirun_wrapper=""
+container="nicspalla/yambo-gcc_openmpi_mkl_slepc"
+
+while [[ $1 == -* ]]; do
+    case $1 in
+        -t | --threads ) threads=$2
+                         shift 2
+                         ;;
+        -c | --container) container=$2
+                          shift 2
+                          ;;
+        -np | --nprocess ) mpirun_wrapper="mpirun --use-hwthread-cpus -np $2"
+              shift 2
+              ;;
+        * ) echo "Error: \"$1\" unrecognized argument."
+            exit 1
+    esac
+done
+
 docker run -ti --user $(id -u):$(id -g) \
-   --mount type=bind,source="$(pwd)",target=/tmpdir \
-   -e OMP_NUM_THREADS=4  \
-   nicspalla/yambo-gcc_openmpi_mkl_slepc $@
+    --mount type=bind,source="$(pwd)",target=/tmpdir \
+    -e OMP_NUM_THREADS=${threads} \
+    ${container} ${mpirun_wrapper} $@
 ```
 
 then give the file execute privileges:
@@ -43,6 +64,12 @@ Move (or copy) this file in the directory where you want to use Yambo and use it
 
 ```
 ./drun.sh yambo -F yambo.in -J yambo.out
+```
+
+This script gives you the possibility to choose the container's name with the option `-c`, set the environment variable `OMP_NUM_THREADS` with the option `-t` and the number of MPI tasks with the option `-np`. Here an example:
+
+```
+./drun.sh -c nicspalla/yambo-gcc_openmpi_mkl_slepc -t 2 -np 4 yambo -F yambo_8.in -J yambo.out
 ```
 
 If the yambo container is working correctly you should obtain:
